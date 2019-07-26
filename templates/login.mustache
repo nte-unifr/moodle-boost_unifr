@@ -1,0 +1,182 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_boost_unifr/login
+
+    Login page template
+
+    Example context (json):
+    {
+        "output": {
+            "doctype": "<!DOCTYPE html>",
+            "page_title": "Login page",
+            "favicon": "favicon.ico",
+            "main_content": "<h1>Headers keep HTML validators happy</h1>"
+        }
+        * pagebottomelements - HTML for all additional layout elements: the footnote.
+    }
+}}
+{{! MODIFICATION:
+    * Add own additional layout elements: the footnote.
+}}
+{{> theme_boost/head }}
+
+<body {{{ bodyattributes }}}>
+
+<div id="page-wrapper">
+
+    {{{ output.standard_top_of_body_html }}}
+
+    <div id="page" class="container-fluid mt-0">
+        <div id="page-content" class="row">
+            <div id="region-main-box" class="col-12">
+                <section id="region-main" class="col-12" aria-label="{{#str}}content{{/str}}">
+                    {{{ output.course_content_header }}}
+                    {{{ output.main_content }}}
+                    {{{output.error}}}
+<div class="my-1 my-sm-5"></div>
+<div class="row justify-content-center">
+<div class="col-xl-6 col-sm-8 ">
+<div class="card">
+    <div class="card-block">
+        <h2 class="card-header text-center">{{sitename}}</h2>
+        <div class="card-body">
+
+          {{#ext}}
+            {{#error}}
+                <div class="loginerrors mt-3">
+                    <a href="#" id="loginerrormessage" class="accesshide">{{error}}</a>
+                    <div class="alert alert-danger" role="alert" data-aria-autofocus="true">{{error}}</div>
+                </div>
+            {{/error}}
+
+            <div class="row justify-content-md-center">
+                <div class="col-md-5">
+                    <form class="mt-3" action="{{loginurl}}" method="post" id="login">
+                        <input id="anchor" type="hidden" name="anchor" value="">
+                        <script>document.getElementById('anchor').value = location.hash;</script>
+                        <input type="hidden" name="logintoken" value="{{logintoken}}">
+                        <div class="form-group">
+                            <label for="username" class="sr-only">
+                                {{^canloginbyemail}}
+                                    {{#str}} username {{/str}}
+                                {{/canloginbyemail}}
+                                {{#canloginbyemail}}
+                                    {{#str}} usernameemail {{/str}}
+                                {{/canloginbyemail}}
+                            </label>
+                            <input type="text" name="username" id="username"
+                                class="form-control"
+                                value="{{username}}"
+                                placeholder={{#quote}}{{^canloginbyemail}}{{#str}}username{{/str}}{{/canloginbyemail}}{{#canloginbyemail}}{{#str}}usernameemail{{/str}}{{/canloginbyemail}}{{/quote}}
+                                autocomplete="username">
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="sr-only">{{#str}} password {{/str}}</label>
+                            <input type="password" name="password" id="password" value=""
+                                class="form-control"
+                                placeholder={{#quote}}{{#str}}password{{/str}}{{/quote}}
+                                autocomplete="current-password">
+                        </div>
+                        {{#rememberusername}}
+                            <div class="rememberpass mt-3">
+                                <input type="checkbox" name="rememberusername" id="rememberusername" value="1" {{#username}}checked="checked"{{/username}} />
+                                <label for="rememberusername">{{#str}} rememberusername, admin {{/str}}</label>
+                            </div>
+                        {{/rememberusername}}
+
+                        <button type="submit" class="btn btn-primary btn-block mt-3" id="loginbtn">{{#str}}login{{/str}}</button>
+                    </form>
+                </div>
+
+                <div class="col-md-5">
+                    <div class="forgetpass mt-3">
+                        <p><a href="{{forgotpasswordurl}}">{{#str}}forgotten{{/str}}</a></p>
+                    </div>
+
+                    <div class="mt-3">
+                        {{#str}} cookiesenabled {{/str}}
+                        {{{cookieshelpiconformatted}}}
+                    </div>
+
+                </div>
+            </div>
+            {{/ext}}
+
+            {{^ext}}
+                <!--h4 class="text-xs-center">{{#str}} firsttime {{/str}}</h4-->
+                <h3 class="unifr-login">{{# str }} loginhint, local_unifr_lang {{/ str }}</h3>
+                <div class="loginpanel">
+                    <div class="subcontent">
+                        {{{wayf}}}
+                    </div>
+                </div>
+            {{/ext}}
+
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+{{#js}}
+    {{#error}}
+        require(['jquery'], function($) {
+            $('#loginerrormessage').focus();
+        });
+    {{/error}}
+    {{^error}}
+        {{#autofocusform}}
+            require(['jquery'], function($) {
+                if ($('#username').val()) {
+                    $('#password').focus();
+                } else {
+                    $('#username').focus();
+                }
+            });
+        {{/autofocusform}}
+    {{/error}}
+{{/js}}
+
+                    {{{ output.course_content_footer }}}
+                </section>
+            </div>
+        </div>
+    </div>
+    <footer id="page-footer" class="py-3 bg-dark text-light">
+        <div class="container">
+            <div id="course-footer">{{{ output.course_footer }}}</div>
+
+            {{# output.page_doc_link }}
+                <p class="helplink">{{{ output.page_doc_link }}}</p>
+            {{/ output.page_doc_link }}
+
+            {{{ output.login_info }}}
+            {{{ output.home_link }}}
+            {{{ output.standard_footer_html }}}
+            {{{ output.standard_end_of_body_html }}}
+        </div>
+    </footer>
+    {{{ pagebottomelements }}}
+</div>
+
+
+</body>
+</html>
+{{#js}}
+require(['theme_boost/loader']);
+{{/js}}
