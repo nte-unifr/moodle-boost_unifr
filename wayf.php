@@ -2,14 +2,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 ob_start();
-if (strpos($CFG->wwwroot,'moodle.unifr.ch') === false) {
-    $login = "https://moodle-test.unifr.ch/Shibboleth.sso/Login?entityID=https%3A%2F%2Ftestidp.unifr.ch%2Fidp%2Fshibboleth&target=https%3A%2F%2Fmoodle-test.unifr.ch%2Fauth%2Fshibboleth%2Findex.php";
-} else {
-    $login = "https://moodle.unifr.ch/Shibboleth.sso/Login?entityID=https%3A%2F%2Faai.unifr.ch%2Fidp%2Fshibboleth&target=https%3A%2F%2Fmoodle.unifr.ch%2Fauth%2Fshibboleth%2Findex.php";
-}
 ?>
     <div class="loginform">
-        <div class="form-input unifr-form"><a rel="external" href="<?php echo $login ?>"><img src="<?php echo $CFG->wwwroot;?>/theme/boost_unifr/pix/unifr_button.png" class="unifr-normalbutton unifr-greybutton"></a></div>
+        <div class="form-input unifr-form"><a rel="external" href="<?php echo $CFG->unifr_loginlink ?>"><img src="<?php echo $CFG->wwwroot;?>/theme/boost_unifr/pix/unifr_button.png" class="unifr-normalbutton unifr-greybutton"></a></div>
 
 <!--			<div class="form-label unifr-label2"><?php print_string('otherAAI','local_unifr_lang') ?></div>-->
         <div class="form-input unifr-button unifr-form"><a rel="external" href="<?php echo $CFG->wwwroot;?>/auth/shibboleth/index.php"><img src="<?php echo $CFG->wwwroot;?>/theme/boost_unifr/pix/aai-edu-id-button-400.png" class="unifr-normalbutton"></a></div>
