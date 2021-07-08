@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Theme Boost Unifr - Upgrade script
+ * Theme Boost Campus - Upgrade script
  *
  * @package   theme_boost_unifr
  * @copyright 2017 Kathrin Osswald, Ulm University kathrin.osswald@uni-ulm.de
@@ -57,6 +57,29 @@ function xmldb_theme_boost_unifr_upgrade($oldversion) {
         set_config('incoursesettingsswitchtorole', null, 'theme_boost_unifr');
 
         upgrade_plugin_savepoint(true, 2018121700, 'theme', 'boost_unifr');
+    }
+
+    if ($oldversion < 2020030800) {
+
+        // The setting "theme_boost_unifr|imageareaitemslinks" has been renamed to imageareaitemsattributes.
+        // If the setting is configured.
+        if ($oldimageareaitemslinks = get_config('theme_boost_unifr', 'imageareaitemslink')) {
+            // Set the value of the setting to the new setting.
+            set_config('imageareaitemsattributes', $oldimageareaitemslinks, 'theme_boost_unifr');
+            // Drop the old setting.
+            set_config('imageareaitemslink', null, 'theme_boost_unifr');
+        }
+
+        upgrade_plugin_savepoint(true, 2020030800, 'theme', 'boost_unifr');
+    }
+
+    if ($oldversion < 2020082801) {
+        // The setting "theme_boost_unifr|courseeditbutton" has been removed because the setting was
+        // reimplemented in Boost core.
+        // Therefore we remove this setting in the database.
+        set_config('courseeditbutton', null, 'theme_boost_unifr');
+
+        upgrade_plugin_savepoint(true, 2020082801, 'theme', 'boost_unifr');
     }
 
     return true;

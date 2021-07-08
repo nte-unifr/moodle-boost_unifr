@@ -24,6 +24,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+global $CFG;
 require_once($CFG->dirroot . '/theme/boost_unifr/locallib.php');
 
 $imageareafiles = theme_boost_unifr_get_imageareacontent();
@@ -31,5 +32,7 @@ $imageareafiles = theme_boost_unifr_get_imageareacontent();
 // Only proceed if received array is not empty.
 if (!empty($imageareafiles)) {
     $templatecontext['imageareafiles'] = $imageareafiles;
-    echo $OUTPUT->render_from_template('theme_boost_unifr/imagearea', $templatecontext);
+    $templatecontext['hasimagearea'] = true;
+} else {
+    $templatecontext['hasimagearea'] = false;
 }

@@ -19,24 +19,57 @@
                 display: block;
             }
         }
-    }
-}
-[data-region="blocks-column"] {
-    width: $blocks-column-width;
-    @include media-breakpoint-down(md) {
-        width: 100%;
+        [data-region="blocks-column"] {
+            width: $blocks-column-width;
+            @include media-breakpoint-down(md) {
+                width: 100%;
+            }
+        }
     }
 }
 
-/* Change the block column width if setting 'blockcolumnwidthdashboard' is different from setting 'blockcolumnwidth'. */
+/* Change the block column width on the Dashboard if setting 'blockcolumnwidthdashboard' is different from setting 'blockcolumnwidth'. */
 @if variable-exists(blockcolumnwidthdashboard) and variable-exists(blockcolumnwidth) {
     @if $blockcolumnwidthdashboard != $blockcolumnwidth {
-        #page-my-index [data-region="blocks-column"] {
-            width: $blocks-column-width-dashboard;
+        /* Distinguish again if setting 'breakpoint' is active.
+           This if-construction has duplicated code by purpose for the sake of readability. */
+        @if variable-exists(breakpoint) and $breakpoint == 'yes' {
+            #page-my-index #region-main-settings-menu.has-blocks,
+            #page-my-index #region-main.has-blocks {
+                display: inline-block;
+                width: calc(100% - #{$blocks-plus-gutter-dashboard});
+                @include media-breakpoint-down(md) {
+                    width: 100%;
+                    /* MDL-63102 - Remove extra space at bottom.
+                    If modifying make sure block-region is horizontally stacked when in full screen */
+                    display: block;
+                }
+            }
+            #page-my-index [data-region="blocks-column"] {
+                width: $blocks-column-width-dashboard;
+                @include media-breakpoint-down(md) {
+                    width: 100%;
+                }
+            }
         }
-        #page-my-index #region-main-settings-menu.has-blocks,
-        #page-my-index #region-main.has-blocks {
-            width: calc(100% - #{$blocks-plus-gutter-dashboard});
+        @else {
+            #page-my-index #region-main-settings-menu.has-blocks,
+            #page-my-index #region-main.has-blocks {
+                display: inline-block;
+                width: calc(100% - #{$blocks-plus-gutter-dashboard});
+                @include media-breakpoint-down(lg) {
+                    width: 100%;
+                    /* MDL-63102 - Remove extra space at bottom.
+                    If modifying make sure block-region is horizontally stacked when in full screen */
+                    display: block;
+                }
+            }
+            #page-my-index [data-region="blocks-column"] {
+                width: $blocks-column-width-dashboard;
+                @include media-breakpoint-down(lg) {
+                    width: 100%;
+                }
+            }
         }
     }
 }
@@ -238,7 +271,7 @@ body.loginbackgroundimage #page {
             .usertext:hover,
             .dropdown-toggle:hover,
             .site-name:hover {
-                color: $brand-primary;
+                color: $primary;
             }
             .navbar-brand:not(.has-logo) .site-name:hover {
                 color: #fff;
@@ -320,7 +353,8 @@ body.loginbackgroundimage #page {
 
     /* Remove border of child nodes which should appear as one block. */
     .list-group-item[data-parent-key="mycourses"],
-    .list-group-item[href*="#section-"]:not([href*="#section-0"]) {
+    .list-group-item[href*="#section-"]:not([href*="#section-0"]),
+    .list-group-item[href*="&section="]:not([href*="&section=0"]) {
         border-top: none;
     }
 }
@@ -417,14 +451,10 @@ body.loginbackgroundimage #page {
     ul.topics,
     ul.weeks,
     ul.periods {
-        /* We need this to prevent bullet points are cut on the left side of the course content. */
-        .contentwithoutlink ul li {
-            list-style-position: inside;
-        }
-        /* Set section dividing border-color to brand-primary. */
+        /* Set section dividing border-color to primary brand color. */
         li.section.main {
             border: none;
-            border-bottom: 1px solid $brand-primary;
+            border-bottom: 1px solid $primary;
             padding-top: 3rem;
             padding-bottom: 2rem;
             margin: 0;
@@ -444,9 +474,9 @@ body.loginbackgroundimage #page {
         }
         /* Change style of highlighted section to highlight more. */
         li.section.main.current {
-            border-bottom: $brand-primary 4px solid;
-            border-top: $brand-primary 3px solid; /*1px less because of section dividing border. */
-            background: $gray-lightest;
+            border-bottom: $primary 4px solid;
+            border-top: $primary 3px solid; /*1px less because of section dividing border. */
+            background: $gray-100;
         }
         /* Remove highlighting from Theme Boost. */
         li.section.main.current::before {
@@ -456,31 +486,37 @@ body.loginbackgroundimage #page {
         li#section-0 {
             padding-top: 0;
         }
-        /* Remove padding => section move button is center-aligned in front of section title and sections are aligned equal to
-           section elements. */
-        li.section .left {
-            padding: 0;
-            padding-right: 5px; /* Align section title equal to beginning of icons within section. */
-        }
         /* Remove spacer from regular sections. */
         img.icon.spacer {
             display: none;
         }
-        /* Increase space from section title (edit mode off) to left border. */
-        h3.sectionname {
-            padding-left: 15px;
-            padding-bottom: 10px;
+        /* Make the summary aligned the same way as with option all section on one page. */
+        .summarytext {
+            margin-left: 25px;
         }
         /* Display icon of hidden activity or resource in grayscale.*/
         .activity .contentwithoutlink .dimmed .activityicon,
         .activity .activityinstance .dimmed .activityicon {
             filter: grayscale(100%);
         }
-        /* Add border to descripion text to differ it from module content. */
+        /* Add border to description text to differ it from module content. */
         .section .contentafterlink {
-            border-left: 2px solid $gray-light;
+            border-left: 2px solid $gray-600;
             padding-left: 10px;
             font-size: .9rem;
+        }
+        /* Add border to description text for restricted activities and show it also to students.
+           This is needed because the classes for teachers and students differ. */
+        .section li:not(.label) .contentwithoutlink:not(:empty) {
+            border-left: 2px solid $gray-600;
+            padding-left: 10px;
+            font-size: .9rem;
+            display: block;
+            margin-left: 30px;
+            margin-top: .5em;
+            p {
+                margin: .5em 0;
+            }
         }
         /* Place meta information in a new line. */
         .resourcelinkdetails {
@@ -497,7 +533,6 @@ body.loginbackgroundimage #page {
         /* Align section title in single view left. */
         h3.sectionname {
             text-align: left;
-            padding-left: 40px;
             padding-top: 1.5rem;
         }
         /* Reduce padding top of first and only section in this view. */
@@ -506,7 +541,7 @@ body.loginbackgroundimage #page {
         }
         .section-navigation .mdl-left:not(:empty),
         .section-navigation .mdl-right:not(:empty) {
-            background-color: $brand-primary;
+            background-color: $primary;
             padding: 2px 8px;
             border-radius: 2px;
             a {
@@ -523,7 +558,7 @@ body.loginbackgroundimage #page {
     ul.periods {
         /* Add bottom border to last section in editing mode. */
         li.section.main:last-child {
-            border-bottom: 1px solid $brand-primary;
+            border-bottom: 1px solid $primary;
         }
         /* Special rule for hidden sections in editing mode as indents are different in this view. */
         li.section.main.hidden {
@@ -545,9 +580,9 @@ body.loginbackgroundimage #page {
  */
 /* Add a decent background to intro text */
 #intro {
-    background-color: $gray-lightest;
+    background-color: $gray-100;
     margin-bottom: 1em;
-    border-left: 3px solid $brand-primary;
+    border-left: 3px solid $primary;
     padding-left: 15px;
     padding-right: 15px;
 }
@@ -558,7 +593,7 @@ body.loginbackgroundimage #page {
 /* Adjust the activity navigation buttons to suit to the topics navigation buttons. */
 #next-activity-link,
 #prev-activity-link {
-    background-color: $brand-primary;
+    background-color: $primary;
     padding: 4px 8px;
     border-radius: 2px;
     color: #fff;
@@ -609,24 +644,6 @@ blockquote::before {
     h4 {
         font-size: 1.2rem;
         font-weight: normal;
-    }
-}
-.coursebox {
-    .moreinfo {
-        float: left;
-        margin-left: 21px;
-        // Put the further information into a new line.
-        clear: left;
-    }
-    .enrolmenticons {
-        // Align the icons in one line with the information icon.
-        display: inline;
-        padding-left: 0.75rem;
-        // As these icons are just for information and not clickable, make the color gray.
-        color: $gray-light;
-    }
-    .moreinfo a + div.enrolmenticons {
-        border-left: 2px solid $gray-light;
     }
 }
 
@@ -703,10 +720,6 @@ blockquote::before {
     }
 }
 
-/* Rule to wrap the content within a block card. */
-.block .card-text.content {
-    word-wrap: break-word;
-}
 /* Rule to reset the whitespace for buttons within blocks. */
 .block .btn {
     white-space: normal;
@@ -743,11 +756,11 @@ blockquote::before {
 
     /* Set footer blocks text color from white to dark gray. */
     .block {
-        color: $gray-dark;
+        color: $gray-900;
         /* Set link and icon color from white to gray. */
         a,
         .icon {
-            color: $gray-dark;
+            color: $gray-900;
         }
         /* Remove the underline decoration from footer blocks context menu items.*/
         .dropdown-item.menu-action {
@@ -817,7 +830,7 @@ blockquote::before {
     /* We need a top border only if there are footer block columns. */
     @if variable-exists(footerblocks) {
         @if $footerblocks != '0columns' {
-            .container-fluid:nth-of-type(2) > .row-fluid {
+            .container-fluid:nth-of-type(2) > .row {
                 border-top: 1px solid #fff;
                 padding-top: 1rem;
             }
@@ -827,7 +840,7 @@ blockquote::before {
     /* If all Moodle links are hidden in the footer, we don't need a top line for the performance info.*/
     @if variable-exists(footerhidehelplink) and variable-exists(footerhidelogininfo) and variable-exists(footerhidehomelink) {
         @if $footerhidehelplink == 'yes' and $footerhidelogininfo == 'yes' and $footerhidehomelink == 'yes' {
-            .container-fluid:nth-of-type(2) > .row-fluid {
+            .container-fluid:nth-of-type(2) > .row {
                 border-top: none;
             }
         }
@@ -841,7 +854,7 @@ blockquote::before {
 
 /* Mark broken links with red color. */
 a[href*="/brokenfile.php"] {
-    color: $brand-danger;
+    color: $danger;
 }
 
 /* Add Font Awesome "broken chain" icon in front of broken link. */
@@ -864,7 +877,6 @@ a[href^="mailto"]::before {
   -------------------------------------*/
 /* Improve the maintenance warning to be full width and to be displayed above the navdrawer navigation. */
 .maintenancewarning {
-    z-index: $zindex-dropdown;
     width: 100%;
     text-align: center;
     margin: 0 !important;
@@ -904,12 +916,28 @@ a[href^="mailto"]::before {
     flex-shrink: 0;
 }
 
+/*
+ * Info banner.
+ */
+/* This is needed because otherwise the top and bottom margin are not equal within the alert box. */
+#themeboostcampusperpinfobanner p,
+#themeboostcampustimedinfobanner p {
+    margin-bottom: 0;
+}
+
 
 /*------------------------------------
   Additional Elements
   -------------------------------------*/
 
-/* Back to top button */
+/* Moodle Core Back to top button */
+body.scrolled #goto-top-link {
+    /* For unknown reasons, the Moodle Core Back to top button is made unclickable by the Boost Campus footer.
+       We fix this by simply raising the z-index of the button. */
+    z-index: $zindex-tooltip;
+}
+
+/* Boost Campus Back to top button */
 #back-to-top {
     display: none;
     position: fixed;
@@ -918,7 +946,7 @@ a[href^="mailto"]::before {
     right: 0.5em;
     line-height: 1.7rem;
     color: #fff;
-    background-color: $brand-primary;
+    background-color: $primary;
     border-radius: 100px;
     cursor: pointer;
     box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.3);
@@ -928,15 +956,12 @@ a[href^="mailto"]::before {
 }
 
 /* In-course settings. */
-#boost-campus-course-settings,
-#boost-campus-activity-settings {
+#boost-unifr-course-settings,
+#boost-unifr-activity-settings {
     /* Initially do not display the settings. Visibility will be changed on click with incoursesettings.js. */
     display: none;
-    padding: 1rem;
-    padding-top: 0;
-    margin-bottom: 3rem;
-    margin-top: 1rem;
-    border: none;
+    margin-bottom: 1rem;
+    padding: 0 1rem 1.3rem 1rem;
 
     .nav-tabs {
         border: none;
@@ -950,6 +975,11 @@ a[href^="mailto"]::before {
         background-color: darken($body-bg, 5%);
         border: none;
     }
+}
+
+/* As this is already placed within the activity content card, the border around the settings card should be removed. */
+#boost-unifr-activity-settings {
+    border: none;
 }
 
 /* Setting to move 'Switch role to...' menu item to the course settings - but only if
@@ -969,7 +999,7 @@ a[href^="mailto"]::before {
             }
             /* We have to add a border for the users who do not have a switch role menu item due to their capabilities. */
             .dropdown-menu.dropdown-menu-right a:last-child {
-                border-bottom: 1px solid $gray-lighter;
+                border-bottom: 1px solid $gray-300;
             }
             .dropdown-menu-right div:last-of-type {
                 margin-bottom: 0;
@@ -1014,6 +1044,12 @@ a[href^="mailto"]::before {
 
 @if variable-exists(helptextmodal) {
     @if $helptextmodal == 'yes' {
+
+        th .boost-unifr-modal-help-dialog .modal-body {
+            text-align: left;
+            font-weight: $font-weight-base;
+        }
+
         .modal {
             /* Set font-size to normal size as the modals inherit the font size from the element they are placed in.
              * This is not intended and so we force the font size to be the normal size. */
@@ -1045,9 +1081,6 @@ a[href^="mailto"]::before {
     &.vjs-no-flex .vjs-menu-button-inline {
         width: 10em;
     }
-    .vjs-controls-disabled .vjs-big-play-button {
-        display: none !important;
-    }
     .vjs-control {
         width: 3em;
     }
@@ -1061,21 +1094,14 @@ a[href^="mailto"]::before {
 .vjs-menu-button-inline .vjs-menu {
     left: 3em;
 }
-.vjs-paused.vjs-has-started.video-js .vjs-big-play-button {
+.vjs-paused.vjs-has-started.video-js:not(.vjs-audio) .vjs-big-play-button {
     display: block;
 }
-.video-js {
+.video-js :not(.vjs-audio) {
     &.vjs-ended .vjs-big-play-button,
     &.vjs-paused .vjs-big-play-button {
         display: block;
     }
-    .vjs-load-progress div {
-        display: none !important;
-    }
-}
-.vjs-seeking .vjs-big-play-button,
-.vjs-waiting .vjs-big-play-button {
-    display: none !important;
 }
 .video-js {
     .vjs-mouse-display:after,
@@ -1086,51 +1112,37 @@ a[href^="mailto"]::before {
         .vjs-loading-spinner {
             display: none;
         }
-        .vjs-big-play-button {
-            display: block !important;
-        }
     }
-}
-.video-js.vjs-ended .vjs-big-play-button,
-.video-js.vjs-paused .vjs-big-play-button,
-.vjs-paused.vjs-has-started.video-js .vjs-big-play-button {
-    display: block;
 }
 .video-js {
     .vjs-big-play-button {
-        top: 50%;
-        left: 50%;
-        margin-left: -1.5em;
-        background-color: $brand-primary;
+        background-color: $primary;
         border-radius: 2px;
-        margin-top: -1em !important;
     }
     &:hover .vjs-big-play-button {
-        background-color: $brand-primary;
+        background-color: $primary;
     }
     .vjs-big-play-button {
         &:focus,
         &:active {
-            background-color: $gray-dark;
+            background-color: $gray-900;
         }
     }
     .vjs-loading-spinner {
-        border-color: $brand-primary;
+        border-color: $primary;
     }
     .vjs-control-bar2 {
         background-color: transparent;
     }
     .vjs-control-bar {
-        background-color: $gray-dark !important;
+        background-color: $gray-900 !important;
         color: #fff;
     }
     .vjs-play-progress,
     .vjs-volume-level {
-        background-color: $brand-primary;
+        background-color: $primary;
     }
     .vjs-big-play-button {
-        width: 2em !important;
-        margin-left: -1em;
         border-width: 2px;
     }
     .vjs-icon-play:before,
@@ -1173,7 +1185,7 @@ a[href^="mailto"]::before {
 
 
 /*------------------------------------
-  Special: Local Plugins
+  Special: Additional Plugins
   -------------------------------------*/
 
 /* Special styles for plugin local_boostnavigation. */
@@ -1183,5 +1195,18 @@ a[href^="mailto"]::before {
     .list-group-item[data-parent-key^="localboostnavigationcustom"],
     .list-group-item[data-key="localboostnavigationcoursesections"][data-collapse="0"] + .list-group-item[href$="#section-0"] {
         border-top: none;
+    }
+}
+/* Special styles for plugin mod_attendance to fix problems with positioning of the table headers in editing mode when
+   the add a block widget is placed in the blocks column. */
+@if variable-exists(addablockposition) {
+    @if $addablockposition == 'positionblockregion' {
+        #page-mod-attendance-report .attendancereporttable .headcol {
+            left: 20px;
+        }
+        #page-mod-attendance-report.has-region-side-pre:not(.empty-region-side-pre) .attendancereporttable .headcol {
+            left: 20px;
+            width: 300px;
+        }
     }
 }

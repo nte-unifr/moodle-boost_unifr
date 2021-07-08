@@ -21,31 +21,40 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery'], function($) {
+define(['jquery', 'core/str', 'core/notification'], function($, str, Notification) {
     "use strict";
 
     /**
      * Initialising.
      */
     function initBackToTop() {
-        // Add a fontawesome icon after the footer as the back to top button.
-        $('#page-footer').after('<i class="fa fa-chevron-up fa-2x d-print-none" id="back-to-top"></i>');
+        // Get the string backtotop from language file.
+        var stringsPromise = str.get_string('backtotop', 'theme_boost_unifr');
 
-        // This function fades the button in when the page is scrolled down or fades it out
-        // if the user is at the top of the page.
-        $(window).scroll(function() {
-            if ($(document).scrollTop() > 220) {
-                $('#back-to-top').fadeIn(300);
-            } else {
-                $('#back-to-top').fadeOut(100);
-            }
-        });
+        // Add backtotop button to DOM and add scroll and click handlers.
+        $.when(stringsPromise).then(function(string) {
+            // Add a fontawesome icon after the footer as the back to top button.
+            $('#page-footer').after('<i class="fa fa-chevron-up fa-2x d-print-none"' +
+                'id="back-to-top" aria-label="' + string + '"></i>');
 
-        // This function scrolls the page to top with a duration of 500ms.
-        $('#back-to-top').click(function(event) {
-            event.preventDefault();
-            $('html, body').animate({scrollTop: 0}, 500);
-        });
+            // This function fades the button in when the page is scrolled down or fades it out
+            // if the user is at the top of the page.
+            $(window).scroll(function() {
+                if ($(document).scrollTop() > 220) {
+                    $('#back-to-top').fadeIn(300);
+                } else {
+                    $('#back-to-top').fadeOut(100);
+                }
+            });
+
+            // This function scrolls the page to top with a duration of 500ms.
+            $('#back-to-top').click(function(event) {
+                event.preventDefault();
+                $('html, body').animate({scrollTop: 0}, 500);
+            });
+
+            return true;
+        }).fail(Notification.exception);
     }
 
     return {

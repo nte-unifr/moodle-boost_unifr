@@ -24,11 +24,13 @@
         "node": {
             "text": "Root of menu",
             "key": "test0",
+            "action": "https://mymoodle.org/action",
             "display": true,
             "children": [
                 {
                     "text": "Child of menu",
                     "key": "test1",
+                    "action": "https://mymoodle.org/action",
                     "display": true,
                     "children": []
                 }
@@ -39,12 +41,10 @@
 {{! MODIFICATION:
     * Added divs around the tab structure to be able to insert this on different sites.
     * Changed the grid definitions for improved displaying.
-    * Inserted heading for the general course settings.
     * Removed check for !is_short_branch to display all children of the course settings within an own tab.
 }}
 
-<div id="boost-campus-course-settings" class="card" >
-    <h2>{{incourse_node_heading}}</h2>
+<div id="boost-unifr-course-settings" class="card">
     <div class="mx-2 pt-2">
         <ul class="nav nav-tabs" role="tablist">
         <!-- First the top most node and immediate children -->

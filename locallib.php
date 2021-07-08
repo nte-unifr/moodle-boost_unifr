@@ -181,11 +181,15 @@ function theme_boost_unifr_get_imageareacontent() {
         // Get all files from filearea.
         $files = $fs->get_area_files($systemcontext->id, 'theme_boost_unifr', 'imageareaitems', false, 'itemid', false);
 
+        // Initialize the array which holds the image links.
+        $links = [];
+        // Initialize the array which holds the alt texts.
+        $alttexts = [];
         // Only continue processing if there are files in the filearea.
         if (!empty($files)) {
-            // Get the content from the setting imageareaitemslink and explode it to an array by the delimiter "new line".
+            // Get the content from the setting imageareaitemsattributes and explode it to an array by the delimiter "new line".
             // The string contains: the image identifier (uploaded file name) and the corresponding link URL.
-            $lines = explode("\n", get_config('theme_boost_unifr', 'imageareaitemslink'));
+            $lines = explode("\n", get_config('theme_boost_unifr', 'imageareaitemsattributes'));
             // Parse item settings.
             foreach ($lines as $line) {
                 $line = trim($line);
@@ -194,44 +198,68 @@ function theme_boost_unifr_get_imageareacontent() {
                     // Create an array with a dummy entry because the function array_key_exists need a
                     // not empty array for parameter 2.
                     $links = array('foo');
+                    $alttexts = array('bar');
                     continue;
                 } else {
                     $settings = explode("|", $line);
-                    // Check if both parameters are set.
-                    if (!empty($settings[1])) {
-                        // The name of the image is the key for the URL that will be set.
-                        $links[$settings[0]] = $settings[1];
+                    // Check if parameter 2 or 3 is set.
+                    if (!empty($settings[1]) || !empty($settings[2])) {
+                        foreach ($settings as $i => $setting) {
+                            $setting = trim($setting);
+                            if (!empty($setting)) {
+                                switch ($i) {
+                                    // Check for the first param: link.
+                                    case 1:
+                                        // The name of the image is the key for the URL that will be set.
+                                        $links[$settings[0]] = $settings[1];
+                                        break;
+                                    // Check for the second param: alt text.
+                                    case 2:
+                                        // The name of the image is the key for the alt text that will be set.
+                                        $alttexts[$settings[0]] = $settings[2];
+                                        break;
+                                }
+                            }
+                        }
                     }
                 }
             }
+            // Initialize the array which holds the data which is later stored in the cache.
+            $imageareacache = [];
             // Traverse the files.
             foreach ($files as $file) {
                 // Get the Moodle url for each file.
                 $url = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(),
-                    $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+                        $file->get_itemid(), $file->get_filepath(), $file->get_filename());
                 // Get the path to the file.
                 $filepath = $url->get_path();
                 // Get the filename.
                 $filename = $file->get_filename();
-                // If filename and key value from the imageareaitemslink setting entry match.
+                // If filename and link value from the imageareaitemsattributes setting entry match.
                 if (array_key_exists($filename, $links)) {
-                    // Set the file and the corresponding link.
-                    $imageareacache[] = array('filepath' => $filepath, 'linkpath' => $links[$filename]);
-                    // Fill the cache.
-                    $themeboostcampuscache->set('imageareadata', $imageareacache);
-                } else { // Just add the file without a link.
-                    $imageareacache[] = array('filepath' => $filepath);
-                    // Fill the cache.
-                    $themeboostcampuscache->set('imageareadata', $imageareacache);
+                    $linkpath = $links[$filename];
+                } else {
+                    $linkpath = "";
                 }
+                // If filename and alt text value from the imageareaitemsattributes setting entry match.
+                if (array_key_exists($filename, $alttexts)) {
+                    $alttext = $alttexts[$filename];
+                } else {
+                    $alttext = "";
+                }
+                // Add the file.
+                $imageareacache[] = array('filepath' => $filepath, 'linkpath' => $linkpath, 'alttext' => $alttext);
             }
             // Sort array alphabetically ascending to the key "filepath".
             usort($imageareacache, function($a, $b) {
                 return strcmp($a["filepath"], $b["filepath"]);
             });
+            // Fill the cache.
+            $themeboostcampuscache->set('imageareadata', $imageareacache);
             return $imageareacache;
         } else { // If no images are uploaded, then cache an empty array.
-            return $themeboostcampuscache->set('imageareadata', array());
+            $themeboostcampuscache->set('imageareadata', array());
+            return array();
         }
     }
 }
@@ -424,4 +452,83 @@ function theme_boost_unifr_get_course_guest_access_hint($courseid) {
     }
 
     return $html;
+}
+
+/**
+ * Return if the info banner should be displayed on current page layout.
+ *
+ * @param array $infobannerpagestoshow The list of page layouts on which the info banner should be shown.
+ * @param string $infobannercontent The content which should be displayed within the info banner.
+ * @param mixed|moodle_page $thispagelayout The current page layout.
+ * @param string $perbibuserprefdialdismissed The user preference if the dissmissible banner has been dismissed.
+ * @return boolean
+ */
+function theme_boost_unifr_show_banner_on_selected_page($infobannerpagestoshow, $infobannercontent, $thispagelayout,
+        $perbibuserprefdialdismissed) {
+
+    // Initialize variable.
+    $infobannershowonselectedpage = false;
+
+    // Traverse multiselect setting.
+    foreach ($infobannerpagestoshow as $page) {
+        if (empty($infobannercontent)) {
+            $infobannershowonselectedpage = false;
+        } else {
+            // Decide if the info banner should be shown at all.
+            if (!empty($infobannercontent) && $thispagelayout == $page && !$perbibuserprefdialdismissed) {
+                $infobannershowonselectedpage = true;
+                continue;
+            }
+        }
+    }
+    return $infobannershowonselectedpage;
+}
+
+/**
+ * Return if the time limited info banner should be displayed on current page layout.
+ *
+ * @param int $now The timestamp of the current server time.
+ * @param array $timedibshowonpages The list of page layouts on which the info banner should be shown.
+ * @param string $timedibcontent The content which should be displayed within the info banner.
+ * @param string $timedibstartsetting The value from setting timedibstart.
+ * @param string $timedibendsetting The value from setting timedibend.
+ * @param mixed|moodle_page $thispagelayout The current page layout.
+ * @return boolean
+ */
+function theme_boost_unifr_show_timed_banner_on_selected_page($now, $timedibshowonpages, $timedibcontent, $timedibstartsetting,
+        $timedibendsetting, $thispagelayout) {
+
+    // Initialize variable.
+    $timedinfobannershowonselectedpage = false;
+
+    // Check if time settings are empty and try to convert the time string_s_ to a unix timestamp.
+    if (empty($timedibstartsetting)) {
+        $timedibstartempty = true;
+        $timedibstart = 0;
+    } else {
+        $timedibstart = strtotime($timedibstartsetting);
+        $timedibstartempty = false;
+    }
+    if (empty($timedibendsetting)) {
+        $timedibendempty = true;
+        $timedibend = 0;
+    } else {
+        $timedibend = strtotime($timedibendsetting);
+        $timedibendempty = false;
+    }
+
+    // Add the time check:
+    // Show the banner when now is between start and end time OR
+    // Show the banner when start is not set but end is not reached yet OR
+    // Show the banner when end is not set, but start lies in the past OR
+    // Show the banner if no dates are set, so there's no time restriction.
+    if (($now >= $timedibstart && $now <= $timedibend ||
+            ($now <= $timedibend && $timedibstartempty) ||
+            ($now >= $timedibstart && $timedibendempty) ||
+            ($timedibstartempty && $timedibendempty))) {
+        $timedinfobannershowonselectedpage = theme_boost_unifr_show_banner_on_selected_page($timedibshowonpages,
+                $timedibcontent, $thispagelayout, false);
+    }
+
+    return $timedinfobannershowonselectedpage;
 }

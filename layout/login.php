@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Theme Boost Unifr Login - Layout file.
+ * Theme Boost Campus Login - Layout file.
  *
  * @package   theme_boost_unifr
  * @copyright 2017 Kathrin Osswald, Ulm University kathrin.osswald@uni-ulm.de
@@ -30,6 +30,11 @@ $bodyattributes = $OUTPUT->body_attributes();
 $wayf = '';
 include_once($CFG->dirroot . '/theme/boost_unifr/wayf.php');
 
+// MODIFICATION START: Set these variables in any case as it's needed in the columns2.mustache file.
+$perpinfobannershowonselectedpage = false;
+$timedinfobannershowonselectedpage = false;
+// MODIFICATION END.
+
 $templatecontext = [
     'rememberusername' => $CFG->rememberusername,
     'ext' => optional_param('ext', 0, PARAM_INT),
@@ -39,12 +44,11 @@ $templatecontext = [
     'sitename' => $CFG->unifr_sitename,
     'output' => $OUTPUT,
     'bodyattributes' => $bodyattributes,
-    'forgotpasswordurl' => new moodle_url('/login/forgot_password.php')
+    'forgotpasswordurl' => new moodle_url('/login/forgot_password.php'),
+    'perpinfobannershowonselectedpage' => $perpinfobannershowonselectedpage,
+    'timedinfobannershowonselectedpage' => $timedinfobannershowonselectedpage
 ];
 
-// MODIFICATION START: Handle additional layout elements.
-// The output buffer is needed to render the additional layout elements now without outputting them to the page directly.
-ob_start();
 
-
+// Render own template.
 echo $OUTPUT->render_from_template('theme_boost_unifr/login', $templatecontext);

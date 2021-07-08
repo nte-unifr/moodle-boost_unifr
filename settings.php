@@ -60,7 +60,7 @@ if ($ADMIN->fulltree) {
     $choices['default.scss'] = 'default.scss';
     $choices['plain.scss'] = 'plain.scss';
 
-    $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
+    $setting = new admin_setting_configthemepreset($name, $title, $description, $default, $choices, 'boost_unifr');
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
@@ -96,7 +96,7 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_heading($name, $title, null);
     $page->add($setting);
 
-    // Variable $brand-color.
+    // Variable $primary.
     // We use an empty default value because the default colour should come from the preset.
     $name = 'theme_boost_unifr/brandcolor';
     $title = get_string('brandcolor', 'theme_boost', null, true);
@@ -105,7 +105,7 @@ if ($ADMIN->fulltree) {
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
-    // Variable $brand-succes-color.
+    // Variable $success.
     $name = 'theme_boost_unifr/brandsuccesscolor';
     $title = get_string('brandsuccesscolorsetting', 'theme_boost_unifr', null, true);
     $description = get_string('brandsuccesscolorsetting_desc', 'theme_boost_unifr', null, true);
@@ -113,7 +113,7 @@ if ($ADMIN->fulltree) {
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
-    // Variable $brand-info-color.
+    // Variable $info.
     $name = 'theme_boost_unifr/brandinfocolor';
     $title = get_string('brandinfocolorsetting', 'theme_boost_unifr', null, true);
     $description = get_string('brandinfocolorsetting_desc', 'theme_boost_unifr', null, true);
@@ -121,7 +121,7 @@ if ($ADMIN->fulltree) {
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
-    // Variable $brand-warning-color.
+    // Variable $warning.
     $name = 'theme_boost_unifr/brandwarningcolor';
     $title = get_string('brandwarningcolorsetting', 'theme_boost_unifr', null, true);
     $description = get_string('brandwarningcolorsetting_desc', 'theme_boost_unifr', null, true);
@@ -129,7 +129,7 @@ if ($ADMIN->fulltree) {
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
-    // Variable $brand-warning-color.
+    // Variable $danger.
     $name = 'theme_boost_unifr/branddangercolor';
     $title = get_string('branddangercolorsetting', 'theme_boost_unifr', null, true);
     $description = get_string('branddangercolorsetting_desc', 'theme_boost_unifr', null, true);
@@ -163,7 +163,7 @@ if ($ADMIN->fulltree) {
     $name = 'theme_boost_unifr/scsspre';
     $title = get_string('rawscsspre', 'theme_boost', null, true);
     $description = get_string('rawscsspre_desc', 'theme_boost', null, true);
-    $setting = new admin_setting_configtextarea($name, $title, $description, '', PARAM_RAW);
+    $setting = new admin_setting_scsscode($name, $title, $description, '', PARAM_RAW);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
@@ -171,7 +171,7 @@ if ($ADMIN->fulltree) {
     $name = 'theme_boost_unifr/scss';
     $title = get_string('rawscss', 'theme_boost', null, true);
     $description = get_string('rawscss_desc', 'theme_boost', null, true);
-    $setting = new admin_setting_configtextarea($name, $title, $description, '', PARAM_RAW);
+    $setting = new admin_setting_scsscode($name, $title, $description, '', PARAM_RAW);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
@@ -188,7 +188,6 @@ if ($ADMIN->fulltree) {
     $description = get_string('catchendkeysetting_desc', 'theme_boost_unifr', null, true) . ' ' .
         get_string('catchkeys_desc_addition', 'theme_boost_unifr', null, true);
     $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
-    $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
     // Setting for catching the cmd + arrow down keys.
@@ -197,7 +196,6 @@ if ($ADMIN->fulltree) {
     $description = get_string('catchcmdarrowdownsetting_desc', 'theme_boost_unifr', null, true) . ' ' .
         get_string('catchkeys_desc_addition', 'theme_boost_unifr', null, true);
     $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
-    $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
     // Setting for catching the strg + arrow down keys.
@@ -206,7 +204,6 @@ if ($ADMIN->fulltree) {
     $description = get_string('catchctrlarrowdownsetting_desc', 'theme_boost_unifr', null, true) . ' ' .
         get_string('catchkeys_desc_addition', 'theme_boost_unifr', null, true);
     $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
-    $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
     // Settings title for the Add a block widget. We don't need a description here.
@@ -229,6 +226,19 @@ if ($ADMIN->fulltree) {
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
+    // Settings title for "Back to top" button. We don't need a description here.
+    $name = 'theme_boost_unifr/bcbttbuttonheading';
+    $title = get_string('bcbttbuttonheadingsetting', 'theme_boost_unifr', null, true);
+    $setting = new admin_setting_heading($name, $title, null);
+    $page->add($setting);
+
+    // Setting enabling the Boost Campus version of the "Back to top" button.
+    $name = 'theme_boost_unifr/bcbttbutton';
+    $title = get_string('bcbttbuttonsetting', 'theme_boost_unifr', null, true);
+    $description = get_string('bcbttbuttonsetting_desc', 'theme_boost_unifr', null, true);
+    $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
+    $page->add($setting);
+
     // Add tab to settings page.
     $settings->add($page);
 
@@ -245,14 +255,6 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configcheckbox($name, $title, $description, 'no', 'yes', 'no'); // Overriding default values
         // yes = 1 and no = 0 because of the use of empty() in theme_boost_unifr_get_pre_scss() (lib.php). Default 0 value would
         // not write the variable to scss that could cause the scss to crash if used in that file. See MDL-58376.
-    $setting->set_updatedcallback('theme_reset_all_caches');
-    $page->add($setting);
-
-    // Setting for displaying edit on / off button addionally in course header.
-    $name = 'theme_boost_unifr/courseeditbutton';
-    $title = get_string('courseeditbuttonsetting', 'theme_boost_unifr', null, true);
-    $description = get_string('courseeditbuttonsetting_desc', 'theme_boost_unifr', null, true);
-    $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
@@ -281,7 +283,6 @@ if ($ADMIN->fulltree) {
     // yes = 1 and no = 0 because of the use of empty() in theme_boost_unifr_get_pre_scss() (lib.php).
     // Default 0 value would not write the variable to scss that could cause the scss to crash if used in that file.
     // See MDL-58376.
-    $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
     // Setting to display a hint to the guest accessing of a course.
@@ -292,7 +293,16 @@ if ($ADMIN->fulltree) {
     // yes = 1 and no = 0 because of the use of empty() in theme_boost_unifr_get_pre_scss() (lib.php).
     // Default 0 value would not write the variable to scss that could cause the scss to crash if used in that file.
     // See MDL-58376.
-    $setting->set_updatedcallback('theme_reset_all_caches');
+    $page->add($setting);
+
+    // Setting to display a hint that the active course has a unrestricted self enrolment.
+    $name = 'theme_boost_unifr/showhintcourseselfenrol';
+    $title = get_string('showhintcourseselfenrolsetting', 'theme_boost_unifr', null, true);
+    $description = get_string('showhintcourseselfenrolsetting_desc', 'theme_boost_unifr', null, true);
+    $setting = new admin_setting_configcheckbox($name, $title, $description, 'no', 'yes', 'no'); // Overriding default values
+    // yes = 1 and no = 0 because of the use of empty() in theme_boost_unifr_get_pre_scss() (lib.php).
+    // Default 0 value would not write the variable to scss that could cause the scss to crash if used in that file.
+    // See MDL-58376.
     $page->add($setting);
 
     // Settings title for grouping course settings related aspects together. We don't need a description here.
@@ -447,9 +457,9 @@ if ($ADMIN->fulltree) {
     $setting->set_updatedcallback('theme_boost_unifr_reset_app_cache');
     $page->add($setting);
 
-    $name = 'theme_boost_unifr/imageareaitemslink';
-    $title = get_string('imageareaitemslinksetting', 'theme_boost_unifr', null, true);
-    $description = get_string('imageareaitemslinksetting_desc', 'theme_boost_unifr', null, true);
+    $name = 'theme_boost_unifr/imageareaitemsattributes';
+    $title = get_string('imageareaitemsattributessetting', 'theme_boost_unifr', null, true);
+    $description = get_string('imageareaitemsattributessetting_desc', 'theme_boost_unifr', null, true);
     $setting = new admin_setting_configtextarea($name, $title, $description, null, PARAM_TEXT);
     $setting->set_updatedcallback('theme_boost_unifr_reset_app_cache');
     $page->add($setting);
@@ -473,7 +483,6 @@ if ($ADMIN->fulltree) {
     $title = get_string('footnotesetting', 'theme_boost_unifr', null, true);
     $description = get_string('footnotesetting_desc', 'theme_boost_unifr', null, true);
     $setting = new admin_setting_confightmleditor($name, $title, $description, '');
-    $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
     // Settings title to group navdrawer related settings together with a common heading. We don't want a description here.
@@ -529,7 +538,8 @@ if ($ADMIN->fulltree) {
 
 
      // Create design settings tab.
-    $page = new admin_settingpage('theme_boost_unifr_design', get_string('designsettings', 'theme_boost_unifr', null, true));
+    $page = new admin_settingpage('theme_boost_unifr_design', get_string('designsettings',
+            'theme_boost_unifr', null, true));
 
     // Settings title to group login page related settings together with a common heading. We don't want a description here.
     $name = 'theme_boost_unifr/loginpagedesignheading';
@@ -550,7 +560,6 @@ if ($ADMIN->fulltree) {
     $title = get_string('loginbackgroundimagetextsetting', 'theme_boost_unifr', null, true);
     $description = get_string('loginbackgroundimagetextsetting_desc', 'theme_boost_unifr', null, true);
     $setting = new admin_setting_configtextarea($name, $title, $description, null, PARAM_TEXT);
-    $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
     // Setting to change the position and design of the login form.
@@ -575,7 +584,6 @@ if ($ADMIN->fulltree) {
     $description = get_string('fontfilessetting_desc', 'theme_boost_unifr', null, true);
     $setting = new admin_setting_configstoredfile($name, $title, $description, 'fontfiles', 0,
             array('maxfiles' => 100, 'accepted_types' => array('.ttf', '.eot', '.woff', '.woff2')));
-    $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
     // Settings title to group block related settings together with a common heading. We don't want a description here.
@@ -670,8 +678,197 @@ if ($ADMIN->fulltree) {
     $description = get_string('additionalresourcessetting_desc', 'theme_boost_unifr', null, true);
     $setting = new admin_setting_configstoredfile($name, $title, $description, 'additionalresources', 0,
         array('maxfiles' => -1));
-    $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
+
+    // Add tab to settings page.
+    $settings->add($page);
+
+    // Create info banner settings tab.
+    $page = new admin_settingpage('theme_boost_unifr_infobanner', get_string('infobannersettings',
+            'theme_boost_unifr', null, true));
+
+    // Settings title to group perpetual information banner settings together with a common heading and description.
+    $name = 'theme_boost_unifr/perpetualinfobannerheading';
+    $title = get_string('perpetualinfobannerheadingsetting', 'theme_boost_unifr', null, true);
+    $description = get_string('perpetualinfobannerheadingsetting_desc', 'theme_boost_unifr', null, true);
+    $setting = new admin_setting_heading($name, $title, $description);
+    $page->add($setting);
+
+    // Activate perpetual information banner.
+    $name = 'theme_boost_unifr/perpibenable';
+    $title = get_string('perpibenablesetting', 'theme_boost_unifr', null, true);
+    $description = get_string('perpibenablesetting_desc', 'theme_boost_unifr', null, true);
+    $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
+    $page->add($setting);
+
+    // Perpetual information banner content.
+    $name = 'theme_boost_unifr/perpibcontent';
+    $title = get_string('perpibcontent', 'theme_boost_unifr', null, true);
+    $description = get_string('perpibcontent_desc', 'theme_boost_unifr', null, true);
+    $setting = new admin_setting_confightmleditor($name, $title, $description, '');
+    $page->add($setting);
+    $settings->hide_if('theme_boost_unifr/perpibcontent',
+            'theme_boost_unifr/perpibenable', 'notchecked');
+
+    // Select pages on which the perpetual information banner should be shown.
+    $name = 'theme_boost_unifr/perpibshowonpages';
+    $title = get_string('perpibshowonpagessetting', 'theme_boost_unifr', null, true);
+    $description = get_string('perpibshowonpagessetting_desc', 'theme_boost_unifr', null, true);
+    $perpibshowonpageoptions = [
+            // Don't use string lazy loading (= false) because the string will be directly used and would produce a
+            // PHP warning otherwise.
+            'mydashboard' => get_string('myhome', 'core', null, false),
+            'course' => get_string('course', 'core', null, false),
+            'login' => get_string('login_page', 'theme_boost_unifr', null, false)
+    ];
+    $setting = new admin_setting_configmultiselect($name, $title, $description,
+            array($perpibshowonpageoptions['mydashboard']), $perpibshowonpageoptions);
+    $page->add($setting);
+    $settings->hide_if('theme_boost_unifr/perpibshowonpages',
+            'theme_boost_unifr/perpibenable', 'notchecked');
+
+    // Select the bootstrap class that should be used for the perpetual info banner.
+    $name = 'theme_boost_unifr/perpibcss';
+    $title = get_string('perpibcsssetting', 'theme_boost_unifr', null, true);
+    $description = get_string('perpibcsssetting_desc', 'theme_boost_unifr', null, true).'<br />'.
+            get_string('ibcsssetting_nobootstrap', 'theme_boost_unifr',
+                   array('bootstrapnone' => get_string('bootstrapnone', 'theme_boost_unifr')));
+    $perpibcssoptions = [
+            // Don't use string lazy loading (= false) because the string will be directly used and would produce a
+            // PHP warning otherwise.
+            'primary' => get_string('bootstrapprimarycolor', 'theme_boost_unifr', null, false),
+            'secondary' => get_string('bootstrapsecondarycolor', 'theme_boost_unifr', null, false),
+            'success' => get_string('bootstrapsuccesscolor', 'theme_boost_unifr', null, false),
+            'danger' => get_string('bootstrapdangercolor', 'theme_boost_unifr', null, false),
+            'warning' => get_string('bootstrapwarningcolor', 'theme_boost_unifr', null, false),
+            'info' => get_string('bootstrapinfocolor', 'theme_boost_unifr', null, false),
+            'light' => get_string('bootstraplightcolor', 'theme_boost_unifr', null, false),
+            'dark' => get_string('bootstrapdarkcolor', 'theme_boost_unifr', null, false),
+            'none' => get_string('bootstrapnone', 'theme_boost_unifr', null, false)
+    ];
+    $setting = new admin_setting_configselect($name, $title, $description, $perpibcssoptions['primary'],
+            $perpibcssoptions);
+    $page->add($setting);
+    $settings->hide_if('theme_boost_unifr/perpibcss',
+            'theme_boost_unifr/perpibenable', 'notchecked');
+
+    // Perpetual information banner dismissible.
+    $name = 'theme_boost_unifr/perpibdismiss';
+    $title = get_string('perpibdismisssetting', 'theme_boost_unifr', null, true);
+    $description = get_string('perpibdismisssetting_desc', 'theme_boost_unifr', null, true);
+    $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
+    $page->add($setting);
+    $settings->hide_if('theme_boost_unifr/perpibdismiss',
+            'theme_boost_unifr/perpibenable', 'notchecked');
+
+    // Perpetual information banner show confirmation dialogue when dismissing.
+    $name = 'theme_boost_unifr/perpibconfirm';
+    $title = get_string('perpibconfirmsetting', 'theme_boost_unifr', null, true);
+    $description = get_string('perpibconfirmsetting_desc', 'theme_boost_unifr', null, true);
+    $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
+    $page->add($setting);
+    $settings->hide_if('theme_boost_unifr/perpibconfirm',
+            'theme_boost_unifr/perpibenable', 'notchecked');
+    $settings->hide_if('theme_boost_unifr/perpibconfirm',
+            'theme_boost_unifr/perpibdismiss', 'notchecked');
+
+    // Reset the user preference for all users.
+    $name = 'theme_boost_unifr/perpibresetvisibility';
+    $title = get_string('perpetualinfobannerresetvisiblitysetting', 'theme_boost_unifr', null, true);
+    $description = get_string('perpetualinfobannerresetvisiblitysetting_desc', 'theme_boost_unifr', null, true);
+    $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
+    $setting->set_updatedcallback('theme_boost_unifr_infobanner_reset_visibility');
+    $page->add($setting);
+    $settings->hide_if('theme_boost_unifr/perpibresetvisibility',
+            'theme_boost_unifr/perpibenable', 'notchecked');
+    $settings->hide_if('theme_boost_unifr/perpibresetvisibility',
+            'theme_boost_unifr/perpibdismiss', 'notchecked');
+
+    // Settings title to group time controlled information banner settings together with a common heading and description.
+    $name = 'theme_boost_unifr/timedinfobannerheading';
+    $title = get_string('timedinfobannerheadingsetting', 'theme_boost_unifr', null, true);
+    $description = get_string('timedinfobannerheadingsetting_desc', 'theme_boost_unifr', null, true);
+    $setting = new admin_setting_heading($name, $title, $description);
+    $page->add($setting);
+
+    // Activate time controlled information banner.
+    $name = 'theme_boost_unifr/timedibenable';
+    $title = get_string('timedibenablesetting', 'theme_boost_unifr', null, true);
+    $description = get_string('timedibenablesetting_desc', 'theme_boost_unifr', null, true);
+    $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
+    $page->add($setting);
+
+    // Time controlled information banner content.
+    $name = 'theme_boost_unifr/timedibcontent';
+    $title = get_string('timedibcontent', 'theme_boost_unifr', null, true);
+    $description = get_string('timedibcontent_desc', 'theme_boost_unifr', null, true);
+    $setting = new admin_setting_confightmleditor($name, $title, $description, '');
+    $page->add($setting);
+    $settings->hide_if('theme_boost_unifr/timedibcontent',
+            'theme_boost_unifr/timedibenable', 'notchecked');
+
+    // Select pages on which the time controlled information banner should be shown.
+    $name = 'theme_boost_unifr/timedibshowonpages';
+    $title = get_string('timedibshowonpagessetting', 'theme_boost_unifr', null, true);
+    $description = get_string('timedibshowonpagessetting_desc', 'theme_boost_unifr', null, true);
+    $timedibpageoptions = [
+        // Don't use string lazy loading (= false) because the string will be directly used and would produce a
+        // PHP warning otherwise.
+            'mydashboard' => get_string('myhome', 'core', null, false),
+            'course' => get_string('course', 'core', null, false),
+            'login' => get_string('login_page', 'theme_boost_unifr', null, false)
+    ];
+    $setting = new admin_setting_configmultiselect($name, $title, $description,
+            array($timedibpageoptions['mydashboard']), $timedibpageoptions);
+    $page->add($setting);
+    $settings->hide_if('theme_boost_unifr/timedibshowonpages',
+            'theme_boost_unifr/timedibenable', 'notchecked');
+
+    // Select the bootstrap class that should be used for the perpetual info banner.
+    $name = 'theme_boost_unifr/timedibcss';
+    $title = get_string('timedibcsssetting', 'theme_boost_unifr', null, true);
+    $description = get_string('timedibcsssetting_desc', 'theme_boost_unifr', null, true).'<br />'.
+            get_string('ibcsssetting_nobootstrap', 'theme_boost_unifr',
+                    array('bootstrapnone' => get_string('bootstrapnone', 'theme_boost_unifr')));
+    $timedibcssoptions = [
+        // Don't use string lazy loading (= false) because the string will be directly used and would produce a
+        // PHP warning otherwise.
+            'primary' => get_string('bootstrapprimarycolor', 'theme_boost_unifr', null, false),
+            'secondary' => get_string('bootstrapsecondarycolor', 'theme_boost_unifr', null, false),
+            'success' => get_string('bootstrapsuccesscolor', 'theme_boost_unifr', null, false),
+            'danger' => get_string('bootstrapdangercolor', 'theme_boost_unifr', null, false),
+            'warning' => get_string('bootstrapwarningcolor', 'theme_boost_unifr', null, false),
+            'info' => get_string('bootstrapinfocolor', 'theme_boost_unifr', null, false),
+            'light' => get_string('bootstraplightcolor', 'theme_boost_unifr', null, false),
+            'dark' => get_string('bootstrapdarkcolor', 'theme_boost_unifr', null, false),
+            'none' => get_string('bootstrapnone', 'theme_boost_unifr', null, false)
+    ];
+    $setting = new admin_setting_configselect($name, $title, $description, $timedibcssoptions['primary'],
+            $timedibcssoptions);
+    $page->add($setting);
+    $settings->hide_if('theme_boost_unifr/timedibcss',
+            'theme_boost_unifr/timedibenable', 'notchecked');
+
+    // This will check for the desired date time format YYYY-MM-DD HH:MM:SS.
+    $timeregex = '/(20[0-9]{2}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])\s([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9])|^$/';
+
+    // Start time for controlled information banner.
+    $name = 'theme_boost_unifr/timedibstart';
+    $title = get_string('timedibstartsetting', 'theme_boost_unifr', null, true);
+    $description = get_string('timedibstartsetting_desc', 'theme_boost_unifr', null, true);
+    $setting = new admin_setting_configtext($name, $title, $description, '', $timeregex);
+    $page->add($setting);
+    $settings->hide_if('theme_boost_unifr/timedibstart',
+            'theme_boost_unifr/timedibenable', 'notchecked');
+
+    // End time for controlled information banner.
+    $name = 'theme_boost_unifr/timedibend';
+    $title = get_string('timedibendsetting', 'theme_boost_unifr', null, true);
+    $description = get_string('timedibendsetting_desc', 'theme_boost_unifr', null, true);
+    $setting = new admin_setting_configtext($name, $title, $description, '', $timeregex);
+    $page->add($setting);
+    $settings->hide_if('theme_boost_unifr/timedibend',
+            'theme_boost_unifr/timedibenable', 'notchecked');
 
     // Add tab to settings page.
     $settings->add($page);

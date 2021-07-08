@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Theme Boost Unifr - Theme config
+ * Theme Boost Campus - Theme config
  *
  * @package    theme_boost_unifr
  * @copyright  2017 Kathrin Osswald, Ulm University <kathrin.osswald@uni-ulm.de>
@@ -39,7 +39,7 @@ if (get_config('theme_boost_unifr', 'footerblocks') == '1columns') {
     $regions[] = 'footer-left';
 } else if (get_config('theme_boost_unifr', 'footerblocks') == '2columns') {
     $regions[] = 'footer-left';
-    $regions[] = 'footer-middle';
+    $regions[] = 'footer-right';
 } else if (get_config('theme_boost_unifr', 'footerblocks') == '3columns') {
     $regions[] = 'footer-left';
     $regions[] = 'footer-middle';
